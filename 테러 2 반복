@@ -1,0 +1,48 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Event = ReplicatedStorage:WaitForChild("ASISU1")
+
+-- 모든 플레이어를 랜덤 순서로 섞는 함수
+local function shuffle(tbl)
+	local newTbl = {}
+	for i, v in ipairs(tbl) do
+		newTbl[i] = v
+	end
+	for i = #newTbl, 2, -1 do
+		local j = math.random(1, i)
+		newTbl[i], newTbl[j] = newTbl[j], newTbl[i]
+	end
+	return newTbl
+end
+
+-- 무한 반복 시작
+while true do
+	local usedPlayers = {}
+	local players = Players:GetPlayers()
+	local availablePlayers = {}
+
+	-- 아직 사용되지 않은 플레이어만 필터링
+	for _, player in ipairs(players) do
+		if not usedPlayers[player.Name] then
+			table.insert(availablePlayers, player)
+		end
+	end
+
+	-- 랜덤 순서로 섞기
+	local shuffled = shuffle(availablePlayers)
+
+	-- 플레이어 하나씩 돈 전송
+	for _, chosen in ipairs(shuffled) do
+		local args = {
+			chosen.Name,
+			-999999999999999999999999999999999999999999999000000000000000000099
+		}
+		Event:FireServer(unpack(args))
+		print("전송됨: ", chosen.Name)
+		usedPlayers[chosen.Name] = true
+		task.wait(0.01)
+	end
+
+	-- 전체 루프를 0.35초 후 다시 시작
+	task.wait(0.35)
+end
