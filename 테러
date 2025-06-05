@@ -1,0 +1,33 @@
+-- 이미 사용한 플레이어 저장용 테이블
+local usedPlayers = {}
+
+-- 모든 플레이어 목록 가져오기
+local players = game:GetService("Players"):GetPlayers()
+
+-- 필터링: 이미 사용한 플레이어는 제외
+local availablePlayers = {}
+for _, player in ipairs(players) do
+	if not usedPlayers[player.Name] then
+		table.insert(availablePlayers, player)
+	end
+end
+
+-- 사용 가능한 플레이어가 있을 경우에만 실행
+if #availablePlayers > 0 then
+	-- 랜덤으로 한 명 선택
+	local chosenPlayer = availablePlayers[math.random(1, #availablePlayers)]
+
+	-- 서버에 전송할 인자 구성
+	local args = {
+		chosenPlayer.Name,
+		-999999999999999999999999999999999999999999999999999999999999999 -- (이 수치는 의미에 따라 적당히 조절)
+	}
+
+	-- 서버에 이벤트 전송
+	game:GetService("ReplicatedStorage"):WaitForChild("ASISU1"):FireServer(unpack(args))
+
+	-- 사용한 플레이어 기록
+	usedPlayers[chosenPlayer.Name] = true
+else
+	warn("사용 가능한 플레이어가 없습니다.")
+end
