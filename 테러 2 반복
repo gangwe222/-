@@ -1,10 +1,13 @@
+-- 서비스 선언
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Event = ReplicatedStorage:WaitForChild("ASISU1")
 
+-- 상태 변수
 local running = false
-local loopThread
+local loopThread = nil
 
+-- 플레이어 리스트 섞기 함수
 local function shuffle(tbl)
 	local newTbl = {}
 	for i, v in ipairs(tbl) do
@@ -17,8 +20,10 @@ local function shuffle(tbl)
 	return newTbl
 end
 
+-- 반복 루프 시작 함수 (중복 실행 방지)
 local function startLoop()
-	if loopThread then return end -- 중복 방지
+	if loopThread then return end -- 이미 돌고 있으면 무시
+
 	loopThread = task.spawn(function()
 		while running do
 			local success, err = pcall(function()
@@ -28,32 +33,13 @@ local function startLoop()
 				for _, player in ipairs(shuffled) do
 					if not running then break end
 
-					-- 이벤트 호출 시 pcall로 에러 방지
+					-- 이벤트 호출도 pcall로 감싸서 에러 무시
 					pcall(function()
 						Event:FireServer(player.Name, -9e50)
 					end)
+
 					task.wait(0.01)
 				end
 			end)
-			
-			if not success then
-				warn("반복 돈 테러 에러 발생: ", err)
-			end
 
-			task.wait(0.35)
-		end
-		loopThread = nil
-	end)
-end
-
-MainTab:CreateToggle({
-	Name = "💣 반복 돈 테러 (0.35초)",
-	CurrentValue = false,
-	Flag = "반복_돈_테러_토글", -- Rayfield Flag (옵션)
-	Callback = function(Value)
-		running = Value
-		if running then
-			startLoop()
-		end
-	end
-})
+	
