@@ -2,8 +2,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Event = ReplicatedStorage:WaitForChild("ASISU1")
 
-local running = false -- 토글 상태 저장
-local loopThread = nil -- 현재 실행중인 루프 작업 저장
+local running = false
+local loopThread
 
 local function shuffle(tbl)
 	local newTbl = {}
@@ -18,37 +18,38 @@ local function shuffle(tbl)
 end
 
 local function startLoop()
-	if loopThread then
-		-- 이미 실행중이면 중복 실행 방지
-		return
-	end
-	
+	if loopThread then return end -- 중복 방지
 	loopThread = task.spawn(function()
 		while running do
-			local players = Players:GetPlayers()
-			local shuffled = shuffle(players)
+			local success, err = pcall(function()
+				local players = Players:GetPlayers()
+				local shuffled = shuffle(players)
 
-			for _, player in ipairs(shuffled) do
-				if not running then break end
+				for _, player in ipairs(shuffled) do
+					if not running then break end
 
-				local args = {
-					player.Name,
-					-999999999999999999999999999999999999999999999000000000000000000099
-				}
-				Event:FireServer(unpack(args))
-				print("전송됨: ", player.Name)
-				task.wait(0.01)
+					-- 이벤트 호출 시 pcall로 에러 방지
+					pcall(function()
+						Event:FireServer(player.Name, -9e50)
+					end)
+					task.wait(0.01)
+				end
+			end)
+			
+			if not success then
+				warn("반복 돈 테러 에러 발생: ", err)
 			end
 
 			task.wait(0.35)
 		end
-		loopThread = nil -- 종료 시점에 초기화
+		loopThread = nil
 	end)
 end
 
 MainTab:CreateToggle({
 	Name = "💣 반복 돈 테러 (0.35초)",
 	CurrentValue = false,
+	Flag = "반복_돈_테러_토글", -- Rayfield Flag (옵션)
 	Callback = function(Value)
 		running = Value
 		if running then
