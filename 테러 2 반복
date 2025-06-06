@@ -3,8 +3,8 @@ local Players = game:GetService("Players")
 local Event = ReplicatedStorage:WaitForChild("ASISU1")
 
 local running = false -- 토글 상태 저장
+local loopThread = nil -- 현재 실행중인 루프 작업 저장
 
--- 플레이어 섞는 함수
 local function shuffle(tbl)
 	local newTbl = {}
 	for i, v in ipairs(tbl) do
@@ -17,9 +17,13 @@ local function shuffle(tbl)
 	return newTbl
 end
 
--- 반복 작업 함수 (토글 상태 따라 동작)
 local function startLoop()
-	task.spawn(function()
+	if loopThread then
+		-- 이미 실행중이면 중복 실행 방지
+		return
+	end
+	
+	loopThread = task.spawn(function()
 		while running do
 			local players = Players:GetPlayers()
 			local shuffled = shuffle(players)
@@ -36,12 +40,12 @@ local function startLoop()
 				task.wait(0.01)
 			end
 
-			task.wait(0.35) -- 전체 순회 끝나고 대기
+			task.wait(0.35)
 		end
+		loopThread = nil -- 종료 시점에 초기화
 	end)
 end
 
--- Rayfield 토글 UI
 MainTab:CreateToggle({
 	Name = "💣 반복 돈 테러 (0.35초)",
 	CurrentValue = false,
