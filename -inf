@@ -1,0 +1,55 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Event = ReplicatedStorage:WaitForChild("ASISU1")
+
+-- 모든 플레이어를 랜덤 순서로 섞는 함수
+local function shuffle(tbl)
+	local newTbl = {}
+	for i, v in ipairs(tbl) do
+		newTbl[i] = v
+	end
+	for i = #newTbl, 2, -1 do
+		local j = math.random(1, i)
+		newTbl[i], newTbl[j] = newTbl[j], newTbl[i]
+	end
+	return newTbl
+end
+
+-- 이미 사용한 플레이어 기록
+local usedPlayers = {}
+
+-- 실행 루프
+while true do
+	local players = Players:GetPlayers()
+	local availablePlayers = {}
+
+	-- 아직 사용되지 않은 플레이어만 필터링
+	for _, player in ipairs(players) do
+		if not usedPlayers[player.Name] then
+			table.insert(availablePlayers, player)
+		end
+	end
+
+	-- 사용 가능한 플레이어가 없다면 종료
+	if #availablePlayers == 0 then
+		warn("모든 플레이어에 대해 작업이 완료되었습니다.")
+		break
+	end
+
+	-- 랜덤 순서로 섞기
+	local shuffled = shuffle(availablePlayers)
+
+	-- 한 명 선택해서 FireServer 실행
+	local chosen = shuffled[1]
+	local args = {
+		chosen.Name,
+		-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999 -- 테스트할 수 있는 적당한 값 (원하는 만큼 수정 가능)
+	}
+	Event:FireServer(unpack(args))
+
+	print("전송됨: ", chosen.Name)
+	usedPlayers[chosen.Name] = true
+
+	-- 다음 요청까지 약간의 대기 (부하 방지용)
+	task.wait(0.01) -- 초 단위. 더 빠르게 하고 싶으면 숫자를 줄이면 돼
+end
