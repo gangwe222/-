@@ -1,33 +1,54 @@
--- 이미 사용한 플레이어 저장용 테이블
-local usedPlayers = {}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Event = ReplicatedStorage:WaitForChild("WXVAV")
 
--- 모든 플레이어 목록 가져오기
-local players = game:GetService("Players"):GetPlayers()
-
--- 필터링: 이미 사용한 플레이어는 제외
-local availablePlayers = {}
-for _, player in ipairs(players) do
-	if not usedPlayers[player.Name] then
-		table.insert(availablePlayers, player)
+-- 플레이어 리스트 섞기 함수
+local function shuffle(tbl)
+	local newTbl = {}
+	for i, v in ipairs(tbl) do
+		newTbl[i] = v
 	end
+	for i = #newTbl, 2, -1 do
+		local j = math.random(1, i)
+		newTbl[i], newTbl[j] = newTbl[j], newTbl[i]
+	end
+	return newTbl
 end
 
--- 사용 가능한 플레이어가 있을 경우에만 실행
-if #availablePlayers > 0 then
-	-- 랜덤으로 한 명 선택
-	local chosenPlayer = availablePlayers[math.random(1, #availablePlayers)]
+-- 작업한 플레이어 기록
+local usedPlayers = {}
 
-	-- 서버에 전송할 인자 구성
+-- 실행 루프
+while true do
+	local players = Players:GetPlayers()
+	local availablePlayers = {}
+
+	-- 아직 안 쓴 플레이어만 넣기
+	for _, player in ipairs(players) do
+		if not usedPlayers[player.Name] then
+			table.insert(availablePlayers, player)
+		end
+	end
+
+	if #availablePlayers == 0 then
+		warn("모든 플레이어에게 완료됨")
+		break
+	end
+
+	-- 셔플해서 랜덤 선택
+	local shuffled = shuffle(availablePlayers)
+	local chosen = shuffled[1]
+
+	-- 정확히 너가 말한 그 방식으로 FireServer
 	local args = {
-		chosenPlayer.Name,
-		-999999999999999999999999999999999999999999999999999999999999999 -- (이 수치는 의미에 따라 적당히 조절)
+		"\236\167\128\235\182\136\236\164\145", -- 이건 유니코드 문자열로 보임
+		chosen, -- Player 객체 직접 전달
+		-9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999 -- 숫자
 	}
+	Event:FireServer(unpack(args))
 
-	-- 서버에 이벤트 전송
-	game:GetService("ReplicatedStorage"):WaitForChild("ASISU1"):FireServer(unpack(args))
+	print("전송됨:", chosen.Name)
+	usedPlayers[chosen.Name] = true
 
-	-- 사용한 플레이어 기록
-	usedPlayers[chosenPlayer.Name] = true
-else
-	warn("사용 가능한 플레이어가 없습니다.")
+	task.wait(0.01) -- 너무 짧으면 서버 렉 걸릴 수 있으니 조정 가능
 end
