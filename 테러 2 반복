@@ -2,7 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Event = ReplicatedStorage:WaitForChild("ASISU1")
 
--- 모든 플레이어를 랜덤 순서로 섞는 함수
+local running = false -- 토글 상태 저장
+
+-- 플레이어 섞는 함수
 local function shuffle(tbl)
 	local newTbl = {}
 	for i, v in ipairs(tbl) do
@@ -15,34 +17,38 @@ local function shuffle(tbl)
 	return newTbl
 end
 
--- 무한 반복 시작
-while true do
-	local usedPlayers = {}
-	local players = Players:GetPlayers()
-	local availablePlayers = {}
+-- 반복 작업 함수 (토글 상태 따라 동작)
+local function startLoop()
+	task.spawn(function()
+		while running do
+			local players = Players:GetPlayers()
+			local shuffled = shuffle(players)
 
-	-- 아직 사용되지 않은 플레이어만 필터링
-	for _, player in ipairs(players) do
-		if not usedPlayers[player.Name] then
-			table.insert(availablePlayers, player)
+			for _, player in ipairs(shuffled) do
+				if not running then break end
+
+				local args = {
+					player.Name,
+					-999999999999999999999999999999999999999999999000000000000000000099
+				}
+				Event:FireServer(unpack(args))
+				print("전송됨: ", player.Name)
+				task.wait(0.01)
+			end
+
+			task.wait(0.35) -- 전체 순회 끝나고 대기
+		end
+	end)
+end
+
+-- Rayfield 토글 UI
+MainTab:CreateToggle({
+	Name = "💣 반복 돈 테러 (0.35초)",
+	CurrentValue = false,
+	Callback = function(Value)
+		running = Value
+		if running then
+			startLoop()
 		end
 	end
-
-	-- 랜덤 순서로 섞기
-	local shuffled = shuffle(availablePlayers)
-
-	-- 플레이어 하나씩 돈 전송
-	for _, chosen in ipairs(shuffled) do
-		local args = {
-			chosen.Name,
-			-999999999999999999999999999999999999999999999000000000000000000099
-		}
-		Event:FireServer(unpack(args))
-		print("전송됨: ", chosen.Name)
-		usedPlayers[chosen.Name] = true
-		task.wait(0.01)
-	end
-
-	-- 전체 루프를 0.35초 후 다시 시작
-	task.wait(0.35)
-end
+})
