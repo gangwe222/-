@@ -50,6 +50,13 @@ MainTab:CreateButton({
    end,
 })
 
+MainTab:CreateButton({
+   Name = "🤣 모두에게 -inf 돈 주기",
+   Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/refs/heads/main/-inf"))()
+   end,
+})
+
 local Toggle = MainTab:CreateToggle({
    Name = "💀모두에게 무한반복으로 돈 테러",
    CurrentValue = false,
@@ -155,6 +162,18 @@ game.Players.LocalPlayer.Chatted:Connect(function(msg)
       })
    end
 end)
+
+game.Players.LocalPlayer.Chatted:Connect(function(msg)
+   if msg == "!무한" then
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/d032734ae1f519eebb8d28c324cd3c2603f38bda/%ED%85%8C%EB%9F%AC%203%20%EB%8F%88%EC%A3%BC%EA%B8%B0"))()
+      Rayfield:Notify({
+         Title = "💵 돈 주기 실행됨",
+         Content = "!무한 명령어 감지",
+         Duration = 2.5
+      })
+   end
+end)
+
 
 local MiscTab = Window:CreateTab("다른기능", nil)
 local MiscSection = MiscTab:CreateSection("1")
