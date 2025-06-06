@@ -165,7 +165,7 @@ end)
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
    if msg == "!무한" then
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/d032734ae1f519eebb8d28c324cd3c2603f38bda/%ED%85%8C%EB%9F%AC%203%20%EB%8F%88%EC%A3%BC%EA%B8%B0"))()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/d032734ae1f519eebb8d28c324cd3c2603f38bda/%ED%85%8C%EB%9F%AC%203%20%EB%8F%88%EC%A3%BC%EA%B8%B0"))()
       Rayfield:Notify({
          Title = "💵 돈 주기 실행됨",
          Content = "!무한 명령어 감지",
