@@ -39,14 +39,14 @@ MainTab:CreateButton({
 MainTab:CreateButton({
    Name = "💥 모두에게 돈 테러",
    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/50636e8405b6e527e99ec84183ef29a440ed876d/%ED%85%8C%EB%9F%AC%202%20%EC%88%98%EC%A0%95"))()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/refs/heads/main/%ED%85%8C%EB%9F%AC%202%20%EC%88%98%EC%A0%95"))()
    end,
 })
 
 MainTab:CreateButton({
    Name = "🎁 모두에게 돈 주기",
    Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/d032734ae1f519eebb8d28c324cd3c2603f38bda/%ED%85%8C%EB%9F%AC%203%20%EB%8F%88%EC%A3%BC%EA%B8%B0"))()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/refs/heads/main/%ED%85%8C%EB%9F%AC%203%20%EB%8F%88%EC%A3%BC%EA%B8%B0"))()
    end,
 })
 
@@ -129,8 +129,13 @@ MainTab:CreateButton({
          return
       end
 
-      local args = { selectedPlayerName, selectedAmount }
-      game:GetService("ReplicatedStorage"):WaitForChild("ASISU1"):FireServer(unpack(args))
+      local args = {
+         "\236\167\128\235\182\136\236\164\145", -- 💸 유니코드 문자열
+         game:GetService("Players"):WaitForChild(selectedPlayerName),
+         selectedAmount
+      }
+
+      game:GetService("ReplicatedStorage"):WaitForChild("WXVAV"):FireServer(unpack(args))
 
       Rayfield:Notify({
          Title = "✅ 완료",
@@ -140,10 +145,11 @@ MainTab:CreateButton({
    end
 })
 
+
 -- ▼ 채팅 명령어 (!ㅌㄹ) 연결
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
    if msg == "!ㅌㄹ" then
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/50636e8405b6e527e99ec84183ef29a440ed876d/%ED%85%8C%EB%9F%AC%202%20%EC%88%98%EC%A0%95"))()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/refs/heads/main/%ED%85%8C%EB%9F%AC%202%20%EC%88%98%EC%A0%95"))()
       Rayfield:Notify({
          Title = "💥 돈 테러 실행됨",
          Content = "!ㅌㄹ 명령어 감지",
@@ -154,7 +160,7 @@ end)
 
 game.Players.LocalPlayer.Chatted:Connect(function(msg)
    if msg == "!ㄱㅂ" then
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/d032734ae1f519eebb8d28c324cd3c2603f38bda/%ED%85%8C%EB%9F%AC%203%20%EB%8F%88%EC%A3%BC%EA%B8%B0"))()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/refs/heads/main/%ED%85%8C%EB%9F%AC%203%20%EB%8F%88%EC%A3%BC%EA%B8%B0"))()
       Rayfield:Notify({
          Title = "💵 돈 주기 실행됨",
          Content = "!ㄱㅂ 명령어 감지",
@@ -182,5 +188,12 @@ local Button = MiscTab:CreateButton({
    Name = "자동차 속도핵",
    Callback = function()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/Documantation12/Universal-Vehicle-Script/main/Main.lua'))()
+   end,
+})
+
+MiscTab:CreateButton({
+   Name = "모든 자동차 사기(한정차,개발자 차 포함)",
+   Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/gangwe222/-/refs/heads/main/%EB%AA%A8%EB%93%A0%EC%B0%A8%20%EC%96%BB%EA%B8%B0%201"))()
    end,
 })
