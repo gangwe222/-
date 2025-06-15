@@ -1,0 +1,52 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Event = ReplicatedStorage:WaitForChild("SendMoney") -- 수정된 리모트 이름
+
+-- 플레이어 리스트 섞기 함수
+local function shuffle(tbl)
+	local newTbl = {}
+	for i, v in ipairs(tbl) do
+		newTbl[i] = v
+	end
+	for i = #newTbl, 2, -1 do
+		local j = math.random(1, i)
+		newTbl[i], newTbl[j] = newTbl[j], newTbl[i]
+	end
+	return newTbl
+end
+
+-- 작업한 플레이어 기록
+local usedPlayers = {}
+
+-- 실행 루프
+while true do
+	local players = Players:GetPlayers()
+	local availablePlayers = {}
+
+	-- 아직 안 쓴 플레이어만 넣기
+	for _, player in ipairs(players) do
+		if not usedPlayers[player.Name] and player ~= Players.LocalPlayer then
+			table.insert(availablePlayers, player)
+		end
+	end
+
+	if #availablePlayers == 0 then
+		warn("모든 플레이어에게 완료됨")
+		break
+	end
+
+	-- 셔플해서 랜덤 선택
+	local shuffled = shuffle(availablePlayers)
+	local chosen = shuffled[1]
+
+	local args = {
+		chosen.Name, -- 플레이어 이름 (string)
+		-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999        -- 원하는 금액 (number)
+	}
+	Event:FireServer(unpack(args))
+
+	print("전송됨:", chosen.Name)
+	usedPlayers[chosen.Name] = true
+
+	task.wait(0.01) -- 너무 짧으면 서버 렉 걸릴 수 있음
+end
