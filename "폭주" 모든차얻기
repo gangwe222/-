@@ -1,0 +1,22 @@
+local player = game:GetService("Players").LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local replicatedStorage = game:GetService("ReplicatedStorage")
+
+local carFrame = playerGui:WaitForChild("CarSpawnerScreen"):WaitForChild("CarSpawnerFrame")
+
+for _, item in ipairs(carFrame:GetChildren()) do
+	if item:IsA("TextLabel") == false then -- TextLabel이 아닌 경우만 (즉, 차량 박스)
+		local statusLabel = item:FindFirstChildWhichIsA("TextLabel")
+
+		if statusLabel and statusLabel.Text ~= "구매 완료" and statusLabel.Text ~= "Owned" and statusLabel.Text ~= "이미 구매함" then
+			local vehicleId = item.Name
+			local args = { vehicleId }
+
+			replicatedStorage:WaitForChild("PurchaseCar"):FireServer(unpack(args))
+			print("구매 시도함:", vehicleId)
+			wait(0.1)
+		end
+	end
+end
+	task.wait(0.01)
+end
